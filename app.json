@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "expo-tetris",
+    "name": "Pastel Tetris",
     "slug": "snack-0a7d1225-2200-41e6-9115-9950468b9d7c",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/appIcon.png",
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/appIcon.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -17,13 +17,20 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/appIcon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.njyyjn.snack0a7d1225220041e691159950468b9d7c"
     },
     "web": {
-      "favicon": "./assets/favicon.png"
-    }
+      "favicon": "./assets/appIcon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "b05614a2-ffbd-40db-83c1-0e5cc8c2a43b"
+      }
+    },
+    "owner": "njyyjn"
   }
 }

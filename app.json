@@ -13,7 +13,11 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.njyyjn.PastelTetris",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -21,16 +25,19 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.njyyjn.snack0a7d1225220041e691159950468b9d7c"
+      "package": "com.njyyjn.PastelTetris"
     },
     "web": {
       "favicon": "./assets/appIcon.png"
     },
+    "owner": "njyyjn",
     "extra": {
       "eas": {
         "projectId": "b05614a2-ffbd-40db-83c1-0e5cc8c2a43b"
       }
     },
-    "owner": "njyyjn"
+    "plugins": [
+      "expo-asset"
+    ]
   }
 }

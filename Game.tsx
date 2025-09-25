@@ -5,14 +5,16 @@ import {
   TouchableOpacity,
   StyleSheet,
   SafeAreaView,
-  Pressable
+  Pressable,
 } from 'react-native';
 import GameBoard from './components/GameBoard';
-import { getRandomTetromino,randomColor } from './components/types';
+import { getRandomTetromino, randomColor } from './components/types';
 import { styled } from './components/Styles';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { NUM_COLS, NUM_ROWS } from './components/types';
 
 const createEmptyBoard = () => {
-  return Array.from({ length: 30 }, () => Array(10).fill(null));
+  return Array.from({ length: NUM_ROWS }, () => Array(NUM_COLS).fill(null));
 };
 
 const POINT_MULTIPLIER = 10;
@@ -23,8 +25,8 @@ export default function Game() {
   const [position, setPosition] = useState({ x: 3, y: 0 });
   const [isGameOver, setIsGameOver] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
-  const [isGamePaused, setIsGamePaused] = useState(false);
-  const [score, setScore] = useState(0);
+  const [isGamePaused, setIsGamePaused] = useState(true);
+  const [score, setScore] = useState(300);
   const [intervalDelay, setIntervalDelay] = useState(1000);
 
   const checkCollision = (shape, pos, board) => {
@@ -34,7 +36,7 @@ export default function Game() {
           const newY = pos.y + y;
           const newX = pos.x + x;
 
-          if (newY >= 20 || newX < 0 || newX >= 10) return true;
+          if (newY >= NUM_ROWS || newX < 0 || newX >= NUM_COLS) return true;
           if (newY >= 0 && board[newY][newX]) return true;
         }
       }
@@ -51,7 +53,7 @@ export default function Game() {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (!isGameOver && isGameStarted) {
+      if (!isGameOver && isGameStarted && !isGamePaused) {
         setPosition((prev) => {
           const newPos = { x: prev.x, y: prev.y + 1 };
 
@@ -93,7 +95,7 @@ export default function Game() {
     }, intervalDelay);
 
     return () => clearInterval(interval);
-  }, [piece, board, isGameOver, isGameStarted]);
+  }, [piece, board, isGameOver, isGameStarted, isGamePaused]);
 
   const getDisplayBoard = () => {
     const displayBoard = board.map((row) => [...row]);
@@ -103,7 +105,12 @@ export default function Game() {
         if (value) {
           const boardY = position.y + y;
           const boardX = position.x + x;
-          if (boardY >= 0 && boardY < 20 && boardX >= 0 && boardX < 10) {
+          if (
+            boardY >= 0 &&
+            boardY < NUM_ROWS &&
+            boardX >= 0 &&
+            boardX < NUM_COLS
+          ) {
             displayBoard[boardY][boardX] = piece.color;
           }
         }
@@ -118,7 +125,7 @@ export default function Game() {
     const rowsCleared = board.length - newBoard.length;
     setScore((prev) => prev + POINT_MULTIPLIER * rowsCleared);
     const emptyRows = Array.from({ length: rowsCleared }, () =>
-      Array(10).fill(null)
+      Array(NUM_COLS).fill(null)
     );
     return [...emptyRows, ...newBoard];
   }
@@ -144,13 +151,12 @@ export default function Game() {
     }
   };
 
-  const longMoveDown =()=>{
-
+  const longMoveDown = () => {
     const newPos = { x: position.x, y: position.y + 2 };
     if (!checkCollision(piece.shape, newPos, board)) {
       setPosition(newPos);
     }
-  }
+  };
 
   const rotate = () => {
     const rotated = piece.shape[0].map((_, i) =>
@@ -164,66 +170,92 @@ export default function Game() {
   const ButtonSector: React.FC = () => {
     return (
       <View style={styles.buttonBar}>
-        {isGameStarted ? (
+        {isGameStarted && !isGamePaused && (
           <>
-            <TouchableOpacity onPress={startGame} style={styles.buttonStyles}>
-              <Text style={{ color: 'white' }}>Refresh</Text>
+            {/*
+*/}
+
+            <TouchableOpacity onPress={rotate} style={styles.buttonStyles}>
+              <Ionicons name="refresh-outline" size={20} color="white" />
             </TouchableOpacity>
             <TouchableOpacity onPress={moveLeft} style={styles.buttonStyles}>
-              <Text style={{ color: 'white' }}>Left</Text>
+              <Ionicons name="arrow-back-outline" size={20} color="white" />
             </TouchableOpacity>
 
             <View style={styles.buttonMid}>
-              <TouchableOpacity onPress={rotate} style={styles.buttonStyles}>
-                <Text style={{ color: 'white' }}>Rotate</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={moveDown} style={styles.buttonStyles} >
-                <Text style={{ color: 'white' }}>Down</Text>
+              <TouchableOpacity onPress={moveDown} style={styles.buttonStyles}>
+                <Ionicons name="arrow-down-outline" size={20} color="white" />
               </TouchableOpacity>
             </View>
 
             <TouchableOpacity onPress={moveRight} style={styles.buttonStyles}>
-              <Text style={{ color: 'white' }}>Right</Text>
+              <Ionicons name="arrow-forward-outline" size={20} color="white" />
             </TouchableOpacity>
-
-            {isGamePaused && (
-              <TouchableOpacity onPress={startGame} style={styles.buttonStyles}>
-                <Text style={{ color: 'white' }}>Pause</Text>
-              </TouchableOpacity>
-            )}
           </>
-        ) : (
-          <TouchableOpacity onPress={startGame} style={styles.buttonStyles}>
-            <Text style={{ color: 'white' }}>Start</Text>
-          </TouchableOpacity>
         )}
       </View>
     );
   };
 
   const startGame = () => {
-    setIsGameOver(false);
-    setIsGameStarted(true);
-    setBoard(createEmptyBoard());
-    setScore(0);
-    setPiece(getRandomTetromino());
-    setPosition({ x: 3, y: 0 });
+    if (!isGamePaused) {
+      setIsGameOver(false);
+      setIsGameStarted(true);
+      setBoard(createEmptyBoard()); 
+      //setPiece(getRandomTetromino());
+      setPosition({ x: 3, y: 0 });
+    } else { 
+      setIsGamePaused(false);
+      if(!isGameStarted){
+        setIsGameOver(false);
+        setIsGameStarted(true);
+        setBoard(createEmptyBoard()); 
+        //setPiece(getRandomTetromino());
+        setPosition({ x: 3, y: 0 });
+
+      }
+    }
   };
-/**
+  const resetGame =()=>{
+    setBoard(createEmptyBoard())
+    startGame();
+  }
+
+  const pauseGame = () => {
+    setIsGamePaused(true);
+  };
+  /**
         <Text style={styles.title}>Pastel Tetris</Text>*/
   return (
     <SafeAreaView style={styled.container}>
       <View style={styles.titleSection}>
-        <Text style={styles.scoreTitle}>Score: {score}</Text>
-      </View>
+        <Text style={styles.title}>Pastel Tetris</Text>
+        {isGameOver ?(
+          <>
+            <TouchableOpacity onPress={resetGame} style={styles.buttonStyles}>
+              <Ionicons name="play-outline" size={20} color="white" />
+            </TouchableOpacity>
+          </>):(
+            <>
+        {!isGamePaused ? (
+          <>
+            <Text style={styles.title}>{score}</Text>
+            <TouchableOpacity onPress={pauseGame} style={styles.buttonStyles}>
+              <Ionicons name="pause-outline" size={20} color="white" />
+            </TouchableOpacity>
+          </>
+        ) : (
+          <>
+            <TouchableOpacity onPress={startGame} style={styles.buttonStyles}>
+              <Ionicons name="play-outline" size={20} color="white" />
+            </TouchableOpacity>
+          </>
+        )}
+        </>
+        )}
 
-      <View
-        style={{
-          width: '100%',
-          height: '80%',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}>
+      </View>
+      <View style={styles.gameContainer}>
         <GameBoard board={getDisplayBoard()} />
       </View>
 
@@ -233,9 +265,15 @@ export default function Game() {
 }
 
 const styles = StyleSheet.create({
+  gameContainer: {
+    width: '100%',
+    height: '80%',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   buttonStyles: {
     width: 50,
-    height: 25,
+    height: 40,
     backgroundColor: '#0d3b66',
     alignItems: 'center',
     justifyContent: 'center',
@@ -247,15 +285,16 @@ const styles = StyleSheet.create({
     height: '10%',
     width: '100%',
     alignItems: 'center',
-    justifyContent: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
   },
   title: {
     fontSize: 20,
     fontFamily: 'monospace',
     marginBottom: 5,
-    color:'#0d3b66',
+    color: '#0d3b66',
   },
-  scoreTitle: { fontSize: 15, fontFamily: 'monospace' },
+  scoreTitle: { fontSize: 15, fontFamily: 'monospace', marginBottom: 5 },
   buttonBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -264,7 +303,6 @@ const styles = StyleSheet.create({
     height: '10%',
   },
   buttonMid: {
-    flexDirection: 'column',
     justifyContent: 'space-around',
   },
 });

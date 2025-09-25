@@ -2,7 +2,7 @@
   "expo": {
     "name": "Pastel Tetris",
     "slug": "snack-0a7d1225-2200-41e6-9115-9950468b9d7c",
-    "version": "1.1.0",
+    "version": "1.2.0",
     "orientation": "portrait",
     "icon": "./assets/appIcon.png",
     "userInterfaceStyle": "light",

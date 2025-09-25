@@ -26,7 +26,7 @@ export default function Game() {
   const [isGameOver, setIsGameOver] = useState(false);
   const [isGameStarted, setIsGameStarted] = useState(false);
   const [isGamePaused, setIsGamePaused] = useState(true);
-  const [score, setScore] = useState(0);
+  const [score, setScore] = useState(300);
   const [intervalDelay, setIntervalDelay] = useState(1000);
 
   const checkCollision = (shape, pos, board) => {
@@ -173,9 +173,7 @@ export default function Game() {
         {isGameStarted && !isGamePaused && (
           <>
             {/*
-            // <TouchableOpacity onPress={startGame} style={styles.buttonStyles}>
-            //   <Text style={{ color: 'white' }}>Refresh</Text>
-            // </TouchableOpacity> */}
+*/}
 
             <TouchableOpacity onPress={rotate} style={styles.buttonStyles}>
               <Ionicons name="refresh-outline" size={20} color="white" />
@@ -203,8 +201,7 @@ export default function Game() {
     if (!isGamePaused) {
       setIsGameOver(false);
       setIsGameStarted(true);
-      setBoard(createEmptyBoard());
-      setScore(0);
+      setBoard(createEmptyBoard()); 
       //setPiece(getRandomTetromino());
       setPosition({ x: 3, y: 0 });
     } else { 
@@ -212,14 +209,17 @@ export default function Game() {
       if(!isGameStarted){
         setIsGameOver(false);
         setIsGameStarted(true);
-        setBoard(createEmptyBoard());
-        setScore(0);
+        setBoard(createEmptyBoard()); 
         //setPiece(getRandomTetromino());
         setPosition({ x: 3, y: 0 });
 
       }
     }
   };
+  const resetGame =()=>{
+    setBoard(createEmptyBoard())
+    startGame();
+  }
 
   const pauseGame = () => {
     setIsGamePaused(true);
@@ -230,7 +230,13 @@ export default function Game() {
     <SafeAreaView style={styled.container}>
       <View style={styles.titleSection}>
         <Text style={styles.title}>Pastel Tetris</Text>
-
+        {isGameOver ?(
+          <>
+            <TouchableOpacity onPress={resetGame} style={styles.buttonStyles}>
+              <Ionicons name="play-outline" size={20} color="white" />
+            </TouchableOpacity>
+          </>):(
+            <>
         {!isGamePaused ? (
           <>
             <Text style={styles.title}>{score}</Text>
@@ -245,6 +251,9 @@ export default function Game() {
             </TouchableOpacity>
           </>
         )}
+        </>
+        )}
+
       </View>
       <View style={styles.gameContainer}>
         <GameBoard board={getDisplayBoard()} />
